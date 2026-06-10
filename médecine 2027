@@ -1,0 +1,510 @@
+import { useState } from "react";
+
+const matieres = [
+  {
+    bloc: "🧬 Bloc Santé (50%)",
+    color: "#1a5276",
+    accent: "#2980b9",
+    light: "#d6eaf8",
+    items: [
+      {
+        nom: "Biologie cellulaire & moléculaire",
+        description: "Structure cellulaire, ADN, transcription, traduction, cycle cellulaire, signalisation",
+        livres: [
+          { titre: "Biologie Cellulaire et Moléculaire", auteur: "Karp", note: "Référence mondiale, très complet" },
+          { titre: "La Cellule — De la Biochimie à la Génétique", auteur: "Marielle Boizeau", note: "Adapté MMOPK, clair et structuré" },
+        ],
+        heures: 80,
+      },
+      {
+        nom: "Biochimie & Métabolisme",
+        description: "Glucides, lipides, protéines, enzymologie, cycles métaboliques (Krebs, glycolyse…)",
+        livres: [
+          { titre: "Biochimie — Tout le cours en fiches", auteur: "Dunod", note: "Idéal pour révisions rapides" },
+          { titre: "Harper's Illustrated Biochemistry", auteur: "Rodwell et al.", note: "Référence internationale, très complet" },
+        ],
+        heures: 70,
+      },
+      {
+        nom: "Anatomie",
+        description: "Appareil locomoteur, cardiovasculaire, digestif, neurologique — bases",
+        livres: [
+          { titre: "Atlas d'Anatomie Humaine", auteur: "Frank H. Netter", note: "LE référentiel visuel incontournable" },
+          { titre: "Anatomie — MMOPK", auteur: "Ellipses", note: "Spécifique première année, synthétique" },
+        ],
+        heures: 90,
+      },
+      {
+        nom: "Physiologie",
+        description: "Fonctionnement des grandes fonctions : cardiovasculaire, respiratoire, rénale, nerveuse",
+        livres: [
+          { titre: "Physiologie Humaine", auteur: "Vander, Sherman, Luciano", note: "Très pédagogique, nombreux schémas" },
+          { titre: "Physiologie — Mémoriser et comprendre", auteur: "Stanislas Brunel", note: "Orienté concours, méthode active" },
+        ],
+        heures: 75,
+      },
+      {
+        nom: "Histologie & Embryologie",
+        description: "Organisation des tissus, développement embryonnaire précoce, organes",
+        livres: [
+          { titre: "Histologie — Bases fondamentales", auteur: "Di Fiore", note: "Classique illustré de l'histologie" },
+          { titre: "Embryologie Humaine", auteur: "Larsen", note: "Référence pour le développement humain" },
+        ],
+        heures: 55,
+      },
+      {
+        nom: "Génétique",
+        description: "Lois de Mendel, génétique moléculaire, mutations, hérédité, génomique",
+        livres: [
+          { titre: "Génétique — Du gène au génome", auteur: "Russell", note: "Très complet, bien structuré" },
+          { titre: "Génétique Médicale", auteur: "Strachan & Read", note: "Orienté médecine, inclut pathologies" },
+        ],
+        heures: 50,
+      },
+    ],
+  },
+  {
+    bloc: "📐 Bloc Disciplinaire (30%)",
+    color: "#1e8449",
+    accent: "#27ae60",
+    light: "#d5f5e3",
+    items: [
+      {
+        nom: "Mathématiques & Statistiques",
+        description: "Statistiques descriptives, probabilités, tests statistiques, épidémiologie",
+        livres: [
+          { titre: "Biostatistiques pour les nuls", auteur: "Cleophas & Zwinderman", note: "Accessible, pratique, orienté santé" },
+          { titre: "Mathématiques — MPSI/PCSI Tomes 1 & 2", auteur: "Gressier", note: "Pour consolider les bases solides" },
+        ],
+        heures: 45,
+      },
+      {
+        nom: "Physique & Biophysique",
+        description: "Électricité, mécanique des fluides, optique, radioactivité, imagerie médicale",
+        livres: [
+          { titre: "Biophysique des Rayonnements", auteur: "Aletti et al.", note: "Spécifique médecine, incontournable" },
+          { titre: "Physique — Tout le cours en fiches", auteur: "Dunod", note: "Révision rapide des fondamentaux" },
+        ],
+        heures: 50,
+      },
+      {
+        nom: "Chimie Générale & Organique",
+        description: "Liaisons chimiques, thermodynamique, cinétique, chimie organique de base",
+        livres: [
+          { titre: "Chimie Générale", auteur: "Petrucci, Harwood", note: "Référence internationale, très structuré" },
+          { titre: "Chimie Organique", auteur: "Clayden", note: "La bible de la chimie organique" },
+        ],
+        heures: 55,
+      },
+      {
+        nom: "Économie & Gestion de la Santé",
+        description: "Système de santé français, financement, protection sociale, gestion hospitalière",
+        livres: [
+          { titre: "Économie de la Santé", auteur: "Batifoulier", note: "Manuel de référence, très pédagogique" },
+          { titre: "Le Système de Santé en France", auteur: "Collectif DREES", note: "Données officielles, actualisé" },
+        ],
+        heures: 30,
+      },
+    ],
+  },
+  {
+    bloc: "🌐 Bloc Transversal (20%)",
+    color: "#7d3c98",
+    accent: "#9b59b6",
+    light: "#e8daef",
+    items: [
+      {
+        nom: "Méthodes de travail universitaire",
+        description: "Méthodologie de la recherche, lecture critique d'articles, rédaction scientifique",
+        livres: [
+          { titre: "Comment Réussir sa Première Année de Médecine", auteur: "Thomas Lavernhe", note: "Méthodes concrètes, retours d'expérience" },
+          { titre: "La Méthode de Travail Universitaire", auteur: "Boutinet", note: "Rigueur académique et organisation" },
+        ],
+        heures: 25,
+      },
+      {
+        nom: "Santé Publique & Épidémiologie",
+        description: "Déterminants de santé, prévention, indicateurs, enjeux de société",
+        livres: [
+          { titre: "Santé Publique et Médecine Sociale", auteur: "Bourdillon", note: "Complet, orienté concours" },
+          { titre: "Épidémiologie pour le Clinicien", auteur: "Feinstein", note: "Approche pratique, raisonnement clinique" },
+        ],
+        heures: 30,
+      },
+      {
+        nom: "Anglais médical",
+        description: "Vocabulaire médical en anglais, lecture d'articles scientifiques, TOEFL médecine",
+        livres: [
+          { titre: "Medical English — Vocabulary in Use", auteur: "Cambridge", note: "Exercices pratiques, progressif" },
+          { titre: "Oxford Handbook of Medical Sciences", auteur: "Sherwood et al.", note: "Lire en anglais technique dès le départ" },
+        ],
+        heures: 20,
+      },
+    ],
+  },
+];
+
+const planning = [
+  {
+    periode: "Juin — Juillet 2026",
+    label: "PHASE 1 · Fondations",
+    color: "#1a5276",
+    semaines: [
+      { sem: "S1-S2 (9–22 juin)", contenu: "Bilan de niveau · Biologie cellulaire (bases) · Anglais médical", heures: 5 },
+      { sem: "S3-S4 (23 juin–6 juil.)", contenu: "Biologie cellulaire (avancé) · Chimie générale · Méthodes universitaires", heures: 6 },
+      { sem: "S5-S6 (7–20 juil.)", contenu: "Biochimie (glucides, lipides) · Physique-Biophysique (bases) · Anglais", heures: 6 },
+      { sem: "S7-S8 (21 juil.–3 août)", contenu: "Biochimie (protéines, enzymes) · Chimie organique · Révisions Bloc 1", heures: 6 },
+    ],
+  },
+  {
+    periode: "Août 2026",
+    label: "PHASE 2 · Consolidation",
+    color: "#1e8449",
+    semaines: [
+      { sem: "S9-S10 (4–17 août)", contenu: "Anatomie (locomoteur, cardiovasculaire) · Netter + schémas quotidiens", heures: 7 },
+      { sem: "S11-S12 (18–31 août)", contenu: "Anatomie (digestif, neuro) · Génétique (Mendel, moléculaire) · Stats", heures: 7 },
+    ],
+  },
+  {
+    periode: "Septembre — Octobre 2026",
+    label: "PHASE 3 · Approfondissement",
+    color: "#7d3c98",
+    semaines: [
+      { sem: "S13-S14 (1–14 sept.)", contenu: "Physiologie cardiovasculaire & respiratoire · Économie Santé (intro) · Repos semaine 13", heures: 5 },
+      { sem: "S15-S16 (15–28 sept.)", contenu: "Physiologie rénale & nerveuse · Histologie (tissus) · Génétique avancé", heures: 6 },
+      { sem: "S17-S18 (29 sept.–12 oct.)", contenu: "Embryologie · Santé publique · Statistiques approfondies", heures: 6 },
+      { sem: "S19-S20 (13–26 oct.)", contenu: "Biophysique avancée · Chimie organique avancée · Révisions Blocs 2 & 3", heures: 7 },
+    ],
+  },
+  {
+    periode: "Novembre — Décembre 2026",
+    label: "PHASE 4 · Intensif & QCM",
+    color: "#922b21",
+    semaines: [
+      { sem: "S21-S22 (27 oct.–9 nov.)", contenu: "Annales PASS/entrainement QCM · Méthodologie concours · Points faibles", heures: 7 },
+      { sem: "S23-S24 (10–23 nov.)", contenu: "Simulations complètes · Feedback · Renforcement ciblé par matière", heures: 8 },
+      { sem: "S25-S26 (24 nov.–7 déc.)", contenu: "Révision générale intégrative · Fiches de synthèse · Repos planifié", heures: 7 },
+      { sem: "S27-S28 (8–21 déc.)", contenu: "Simulations finales · Bilan global · Préparation mentale · Vacances", heures: 5 },
+    ],
+  },
+  {
+    periode: "Janvier — Août 2027",
+    label: "PHASE 5 · Pré-rentrée & Sprint final",
+    color: "#b7770d",
+    semaines: [
+      { sem: "Janvier 2027", contenu: "Reprise progressive · Focus Anatomie & Physiologie · QCM quotidiens", heures: 6 },
+      { sem: "Fév.–Avril 2027", contenu: "Révisions par blocs (santé → disciplinaire → transversal) · 1 simu/semaine", heures: 7 },
+      { sem: "Mai–Juillet 2027", contenu: "Sprint final · Annales · Corrections détaillées · Mémorisation active", heures: 9 },
+      { sem: "Août 2027", contenu: "Dernières révisions ciblées · Préparation logistique rentrée · Repos obligatoire", heures: 4 },
+    ],
+  },
+];
+
+export default function App() {
+  const [activeBloc, setActiveBloc] = useState(null);
+  const [activeMat, setActiveMat] = useState(null);
+  const [activeTab, setActiveTab] = useState("matieres");
+
+  const allHeures = matieres.flatMap(b => b.items).reduce((sum, m) => sum + m.heures, 0);
+
+  return (
+    <div style={{ fontFamily: "'Segoe UI', system-ui, sans-serif", background: "#f0f4f8", minHeight: "100vh", color: "#1a2332" }}>
+      {/* Header */}
+      <div style={{
+        background: "linear-gradient(135deg, #0d2137 0%, #1a5276 60%, #2471a3 100%)",
+        color: "white",
+        padding: "2rem 1.5rem 1.5rem",
+        textAlign: "center",
+        position: "relative",
+        overflow: "hidden"
+      }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, background: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")", opacity: 0.5 }} />
+        <div style={{ position: "relative" }}>
+          <div style={{ fontSize: "2.2rem", marginBottom: "0.3rem" }}>⚕️</div>
+          <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 800, letterSpacing: "-0.5px" }}>
+            Mise à niveau Médecine
+          </h1>
+          <p style={{ margin: "0.4rem 0 0", opacity: 0.8, fontSize: "0.9rem" }}>
+            Réforme 2027 · Voie Unique MMOPK · Blocs Santé / Disciplinaire / Transversal
+          </p>
+          <div style={{
+            marginTop: "1rem",
+            display: "inline-block",
+            background: "rgba(255,255,255,0.15)",
+            borderRadius: "20px",
+            padding: "0.3rem 1rem",
+            fontSize: "0.78rem",
+            fontWeight: 600,
+            border: "1px solid rgba(255,255,255,0.2)"
+          }}>
+            📅 Rentrée septembre 2027 · {allHeures}h de révision planifiées
+          </div>
+        </div>
+      </div>
+
+      {/* Reforme Banner */}
+      <div style={{ background: "#fff3cd", borderLeft: "4px solid #f0a500", padding: "0.8rem 1.5rem", fontSize: "0.82rem", lineHeight: 1.5 }}>
+        <strong>⚡ Réforme officielle (17 avril 2026) :</strong> Le PASS et la LAS sont supprimés à la rentrée 2027. Une voie unique nationale remplace ces deux filières, organisée en 3 blocs : <strong>Santé (50%)</strong>, <strong>Disciplinaire (30%)</strong> et <strong>Transversal (20%)</strong>. La sélection reste très exigeante — le nombre de places est inchangé.
+      </div>
+
+      {/* Tabs */}
+      <div style={{ display: "flex", background: "white", borderBottom: "2px solid #e2e8f0", padding: "0 1rem" }}>
+        {[
+          { key: "matieres", label: "📚 Matières & Livres" },
+          { key: "planning", label: "📅 Planning 2026–2027" },
+          { key: "conseils", label: "💡 Conseils & Méthode" },
+        ].map(tab => (
+          <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
+            padding: "0.9rem 1rem",
+            border: "none",
+            background: "none",
+            fontWeight: activeTab === tab.key ? 700 : 400,
+            color: activeTab === tab.key ? "#1a5276" : "#666",
+            borderBottom: activeTab === tab.key ? "3px solid #1a5276" : "3px solid transparent",
+            cursor: "pointer",
+            fontSize: "0.85rem",
+            flex: 1,
+            textAlign: "center"
+          }}>
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ padding: "1rem 1rem 3rem" }}>
+
+        {/* === MATIERES TAB === */}
+        {activeTab === "matieres" && (
+          <div>
+            {/* Stats row */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.6rem", marginBottom: "1.2rem" }}>
+              {[
+                { label: "Matières", val: matieres.flatMap(b => b.items).length, icon: "📖" },
+                { label: "Heures total", val: allHeures + "h", icon: "⏱" },
+                { label: "Blocs", val: 3, icon: "🗂" },
+              ].map(s => (
+                <div key={s.label} style={{ background: "white", borderRadius: "12px", padding: "0.9rem 0.5rem", textAlign: "center", boxShadow: "0 1px 4px rgba(0,0,0,0.08)" }}>
+                  <div style={{ fontSize: "1.4rem" }}>{s.icon}</div>
+                  <div style={{ fontWeight: 800, fontSize: "1.3rem", color: "#1a5276" }}>{s.val}</div>
+                  <div style={{ fontSize: "0.72rem", color: "#888" }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+
+            {matieres.map((bloc, bi) => (
+              <div key={bi} style={{ marginBottom: "1rem" }}>
+                <button
+                  onClick={() => setActiveBloc(activeBloc === bi ? null : bi)}
+                  style={{
+                    width: "100%",
+                    background: `linear-gradient(135deg, ${bloc.color}, ${bloc.accent})`,
+                    color: "white",
+                    border: "none",
+                    borderRadius: "12px",
+                    padding: "1rem 1.2rem",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    cursor: "pointer",
+                    fontSize: "0.95rem",
+                    fontWeight: 700,
+                    boxShadow: "0 3px 10px rgba(0,0,0,0.15)"
+                  }}
+                >
+                  <span>{bloc.bloc}</span>
+                  <span style={{ fontSize: "1.2rem" }}>{activeBloc === bi ? "▲" : "▼"}</span>
+                </button>
+
+                {activeBloc === bi && (
+                  <div style={{ marginTop: "0.6rem", display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                    {bloc.items.map((mat, mi) => {
+                      const key = `${bi}-${mi}`;
+                      const open = activeMat === key;
+                      return (
+                        <div key={mi} style={{ background: "white", borderRadius: "10px", overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.08)", border: `1px solid ${bloc.light}` }}>
+                          <button
+                            onClick={() => setActiveMat(open ? null : key)}
+                            style={{
+                              width: "100%",
+                              background: open ? bloc.light : "white",
+                              border: "none",
+                              padding: "0.9rem 1rem",
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "flex-start",
+                              cursor: "pointer",
+                              textAlign: "left"
+                            }}
+                          >
+                            <div>
+                              <div style={{ fontWeight: 700, fontSize: "0.9rem", color: bloc.color }}>{mat.nom}</div>
+                              <div style={{ fontSize: "0.75rem", color: "#666", marginTop: "0.2rem" }}>{mat.description}</div>
+                            </div>
+                            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.2rem", minWidth: "56px", marginLeft: "0.5rem" }}>
+                              <span style={{ background: bloc.accent, color: "white", borderRadius: "8px", padding: "0.1rem 0.5rem", fontSize: "0.72rem", fontWeight: 700 }}>{mat.heures}h</span>
+                              <span style={{ fontSize: "0.9rem" }}>{open ? "▲" : "▼"}</span>
+                            </div>
+                          </button>
+
+                          {open && (
+                            <div style={{ padding: "0 1rem 1rem", borderTop: `1px solid ${bloc.light}` }}>
+                              <p style={{ fontSize: "0.78rem", fontWeight: 700, color: bloc.color, margin: "0.8rem 0 0.5rem", textTransform: "uppercase", letterSpacing: "0.5px" }}>📚 Livres recommandés</p>
+                              {mat.livres.map((livre, li) => (
+                                <div key={li} style={{
+                                  background: bloc.light,
+                                  borderRadius: "8px",
+                                  padding: "0.7rem",
+                                  marginBottom: "0.5rem",
+                                  borderLeft: `3px solid ${bloc.accent}`
+                                }}>
+                                  <div style={{ fontWeight: 700, fontSize: "0.85rem", color: bloc.color }}>📖 {livre.titre}</div>
+                                  <div style={{ fontSize: "0.78rem", color: "#555", marginTop: "0.15rem" }}>✍️ {livre.auteur}</div>
+                                  <div style={{ fontSize: "0.75rem", color: "#777", marginTop: "0.15rem", fontStyle: "italic" }}>💬 {livre.note}</div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* === PLANNING TAB === */}
+        {activeTab === "planning" && (
+          <div>
+            <div style={{ background: "white", borderRadius: "12px", padding: "1rem", marginBottom: "1rem", boxShadow: "0 1px 4px rgba(0,0,0,0.08)" }}>
+              <h3 style={{ margin: "0 0 0.5rem", fontSize: "0.9rem", color: "#1a5276" }}>🗓 Vue d'ensemble du planning</h3>
+              <p style={{ margin: 0, fontSize: "0.8rem", color: "#666", lineHeight: 1.6 }}>
+                Le planning couvre <strong>juin 2026 à août 2027</strong> — soit environ 14 mois de préparation. Il est divisé en 5 phases progressives, du renforcement des bases à l'intensification pré-concours.
+              </p>
+            </div>
+
+            {planning.map((phase, pi) => (
+              <div key={pi} style={{ marginBottom: "1rem" }}>
+                <div style={{
+                  background: `linear-gradient(135deg, ${phase.color}ee, ${phase.color}99)`,
+                  color: "white",
+                  borderRadius: "12px 12px 0 0",
+                  padding: "0.8rem 1rem",
+                  fontWeight: 800,
+                  fontSize: "0.9rem"
+                }}>
+                  <div style={{ fontSize: "0.7rem", opacity: 0.8, textTransform: "uppercase", letterSpacing: "1px" }}>{phase.label}</div>
+                  <div>{phase.periode}</div>
+                </div>
+                <div style={{ background: "white", borderRadius: "0 0 12px 12px", overflow: "hidden", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
+                  {phase.semaines.map((s, si) => (
+                    <div key={si} style={{
+                      padding: "0.8rem 1rem",
+                      borderBottom: si < phase.semaines.length - 1 ? "1px solid #f0f4f8" : "none",
+                      display: "flex",
+                      gap: "0.8rem",
+                      alignItems: "flex-start"
+                    }}>
+                      <div style={{ minWidth: "32px", height: "32px", background: phase.color + "20", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.7rem", fontWeight: 700, color: phase.color }}>
+                        {s.heures}h
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: "0.8rem", color: phase.color }}>{s.sem}</div>
+                        <div style={{ fontSize: "0.78rem", color: "#555", marginTop: "0.2rem", lineHeight: 1.5 }}>{s.contenu}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            <div style={{ background: "#fff3cd", borderRadius: "12px", padding: "1rem", border: "1px solid #f0a500" }}>
+              <p style={{ margin: 0, fontSize: "0.8rem", color: "#7d5c00", lineHeight: 1.6 }}>
+                <strong>⚠️ Important :</strong> Les programmes détaillés du nouveau concours ne sont pas encore officiellement publiés. Ce planning est basé sur les 3 blocs annoncés. Consultez régulièrement le site de votre université pour les mises à jour.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* === CONSEILS TAB === */}
+        {activeTab === "conseils" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.8rem" }}>
+            {[
+              {
+                icon: "🧠",
+                titre: "La méthode active est essentielle",
+                contenu: "Ne vous contentez pas de lire. Faites des schémas, des fiches, des QCM auto-générés. La répétition espacée (Anki) est prouvée scientifiquement pour retenir à long terme.",
+                color: "#1a5276"
+              },
+              {
+                icon: "⏰",
+                titre: "Travaillez en blocs de 25 min (Pomodoro)",
+                contenu: "25 min de travail intense + 5 min de pause. Après 4 blocs, 20 min de pause. Évite l'épuisement mental et améliore la concentration.",
+                color: "#1e8449"
+              },
+              {
+                icon: "🎯",
+                titre: "Priorité au Bloc Santé (50% des ECTS)",
+                contenu: "Biologie, Anatomie, Physiologie représentent l'essentiel du concours. Réservez 60% de votre temps à ce bloc, surtout les 6 premiers mois.",
+                color: "#922b21"
+              },
+              {
+                icon: "📊",
+                titre: "Le nouveau concours note l'ensemble du parcours",
+                contenu: "La réforme 2027 évalue l'ensemble du parcours académique, pas seulement les notes de santé. Maintenez un bon niveau dans toutes les matières.",
+                color: "#7d3c98"
+              },
+              {
+                icon: "🔁",
+                titre: "Révisez en spirale, pas en silos",
+                contenu: "Ne terminez pas une matière avant d'en commencer une autre. Revenez régulièrement sur ce que vous avez vu. L'inter-connexion des matières est clé.",
+                color: "#b7770d"
+              },
+              {
+                icon: "💤",
+                titre: "Le sommeil consolide la mémoire",
+                contenu: "7–9h de sommeil par nuit sont indispensables. La nuit consolide les apprentissages. Les nuits blanches sont contre-productives avant les examens.",
+                color: "#2e86c1"
+              },
+              {
+                icon: "👥",
+                titre: "Rejoignez des groupes de travail",
+                contenu: "Expliquer une notion à quelqu'un d'autre est la meilleure façon de la maîtriser (méthode Feynman). Les groupes Discord/Telegram dédiés MMOPK sont très actifs.",
+                color: "#17a589"
+              },
+              {
+                icon: "📱",
+                titre: "Outils numériques recommandés",
+                contenu: "Anki (répétition espacée) · Notion (organisation) · Isograd / Osmosis (cours vidéo médecine) · Kognity (biologie interactive) · Zotero (gestion bibliographique)",
+                color: "#566573"
+              },
+            ].map((c, i) => (
+              <div key={i} style={{
+                background: "white",
+                borderRadius: "12px",
+                padding: "1rem",
+                borderLeft: `4px solid ${c.color}`,
+                boxShadow: "0 1px 4px rgba(0,0,0,0.06)"
+              }}>
+                <div style={{ fontWeight: 700, fontSize: "0.9rem", color: c.color, marginBottom: "0.4rem" }}>
+                  {c.icon} {c.titre}
+                </div>
+                <div style={{ fontSize: "0.82rem", color: "#555", lineHeight: 1.6 }}>{c.contenu}</div>
+              </div>
+            ))}
+
+            <div style={{ background: "linear-gradient(135deg, #0d2137, #1a5276)", color: "white", borderRadius: "12px", padding: "1.2rem", textAlign: "center", marginTop: "0.5rem" }}>
+              <div style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>🏆</div>
+              <div style={{ fontWeight: 800, fontSize: "1rem", marginBottom: "0.4rem" }}>La régularité bat l'intensité</div>
+              <div style={{ fontSize: "0.82rem", opacity: 0.85, lineHeight: 1.6 }}>
+                1h30 de travail quotidien pendant 14 mois vaut bien plus qu'un sprint de dernière minute. Construisez vos révisions comme un marathon, pas un sprint.
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
+    </div>
+  );
+}
